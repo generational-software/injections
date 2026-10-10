@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "id": "peterm.injections",
+  "name": "Injections",
+  "version": "1.0.0",
+  "author": "peterm",
+  "license": "MIT",
+  "description": "Check off daily injections from the bar. Rename them or turn off the ones you don't take. The first open each day clears them.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "activation": "on-demand",
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Injections",
+    "description": "Daily injection checks. Rename each one or turn off the ones you don't take. Opening the panel the first time each day clears them.",
+    "category": "Health",
+    "aliases": [
+      "injections",
+      "insulin",
+      "doses"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "label1": "Morning",
+      "label2": "Lunch",
+      "label3": "Dinner",
+      "label4": "Bedtime"
+    },
+    "schema": [
+      {
+        "key": "label1",
+        "type": "string",
+        "label": "First injection",
+        "defaultValue": "Morning"
+      },
+      {
+        "key": "label2",
+        "type": "string",
+        "label": "Second injection",
+        "defaultValue": "Lunch"
+      },
+      {
+        "key": "label3",
+        "type": "string",
+        "label": "Third injection",
+        "defaultValue": "Dinner"
+      },
+      {
+        "key": "label4",
+        "type": "string",
+        "label": "Fourth injection",
+        "defaultValue": "Bedtime"
+      },
+      {
+        "key": "enabled1",
+        "type": "boolean",
+        "label": "First injection on",
+        "defaultValue": true
+      },
+      {
+        "key": "enabled2",
+        "type": "boolean",
+        "label": "Second injection on",
+        "defaultValue": true
+      },
+      {
+        "key": "enabled3",
+        "type": "boolean",
+        "label": "Third injection on",
+        "defaultValue": true
+      },
+      {
+        "key": "enabled4",
+        "type": "boolean",
+        "label": "Fourth injection on",
+        "defaultValue": true
+      }
+    ]
+  }
+}
