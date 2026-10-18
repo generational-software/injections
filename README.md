@@ -23,3 +23,15 @@ omarchy plugin enable peterm.injections --section right --before omarchy.tray
 ```
 
 The widget hides itself on a bar narrower than 720 logical pixels.
+
+## Remove
+
+```bash
+omarchy plugin remove peterm.injections --yes
+```
+
+That takes the widget off the bar, including the names and on/off switches stored with it, and deletes `~/.config/omarchy/plugins/peterm.injections`. The checklist at `~/.local/state/omarchy/injections/doses.json` stays, so a later install keeps today's checks.
+
+## License
+
+This plugin is covered by the MIT license.
