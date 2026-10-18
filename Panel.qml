@@ -262,7 +262,22 @@ Panel {
 
   Process {
     id: mkdirProc
-    command: ["mkdir", "-p", root.stateDir]
+    // doses.json is a private checklist. Create the directory mode 0700
+    // so only the owner can enter it, then the same for a directory that
+    // was already there. The file is created mode 0600 before FileView
+    // writes it. An atomic save copies the mode of the file it replaces,
+    // so a later check stays readable and writable by the owner alone.
+    // noclobber keeps a second bar from emptying a file the first one
+    // already wrote.
+    command: [
+      "sh", "-c",
+      "umask 077; mkdir -p -m 700 -- \"$1\" || exit 1; chmod 700 -- \"$1\" || exit 1"
+        + "; if (set -C; : > \"$2\") 2>/dev/null; then chmod 600 -- \"$2\"; exit $?; fi"
+        + "; chmod 600 -- \"$2\"",
+      "sh",
+      root.stateDir,
+      root.statePath
+    ]
     onExited: function(exitCode) {
       if (exitCode !== 0) {
         console.warn("injections: could not create", root.stateDir)
@@ -286,7 +301,20 @@ Panel {
       if (!root.mkdirDone || root.stateReady) return
       root.applyLoaded("")
     }
-    onFileChanged: reload()
+    // Ignore the create/chmod events from mkdirProc. reload() after that
+    // process exits reads the settled file.
+    onFileChanged: if (root.mkdirDone) reload()
+    // The write may have recreated the directory or the file with a wider
+    // mode. Check both, and change a mode only when it is not already
+    // owner-only: directory 0700, file 0600.
+    onSaved: Quickshell.execDetached([
+      "sh", "-c",
+      "dirmode=$(stat -c %a -- \"$1\" 2>/dev/null); [ \"$dirmode\" = 700 ] || chmod u=rwx,u-s,g-rwxs,o-rwxt -- \"$1\""
+        + "; filemode=$(stat -c %a -- \"$2\" 2>/dev/null); [ \"$filemode\" = 600 ] || chmod 600 -- \"$2\"",
+      "sh",
+      root.stateDir,
+      root.statePath
+    ])
   }
 
   Component.onCompleted: mkdirProc.running = true
